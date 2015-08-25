@@ -1,0 +1,146 @@
+{% extends 'elements/base.html' %}
+{% block content %}
+
+
+<section class="block-in">
+
+    <div class="row">
+        <div class="large-8 medium-8 small-12 columns ">
+            <div class="bread">
+                <ul class="breadcrumbs">
+                    <li><a href="{% url 'home' %}">Início</a></li>
+                    <li class="current"><a href="#">Receitas</a></li>
+                </ul>
+            </div>
+
+            <div class="block widget show-for-small">
+                <div class="form-search">
+                    <input type="radio" name="tipo-busca-small" value="Receitas" id="receitas-chk-small" checked><label for="receitas-chk-small">Receitas</label>
+                    <input type="radio" name="tipo-busca-small" value="Chefes" id="chefes-chk-small"><label for="chefes-chk-small">Chefes</label>
+
+                    <div class="row collapse">
+                        <div class="small-9 columns">
+                            <input name="q-small" id="id_q_small" type="text" placeholder="Pesquisar receitas ou chefes">
+                        </div>
+                        <div class="small-3 columns">
+                            <button onclick="search_small();" class="button postfix"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="block widget top-recipes">
+                {% if request.GET.q %}
+                <h4 class="box-title fa fa-search">Resultado de <span>"{{ request.GET.q  }}"</span></h4>
+                {% endif %}
+                <ul class="recipe-list-top-recipes small-block-grid-1 medium-block-grid-3 large-block-grid-3">
+                    {% for recipe in object_list %}
+                    <li>
+                        <div class="top-recipe img-transition">
+                            <div class="img">
+                                <a href="{% url 'recipe_detail' recipe.slug recipe.pk %}">
+                                    {% if recipe.photo %}
+                                    <img src="{{ recipe.get_image_235x151 }}"
+                                         alt="{{ recipe.name }}">
+                                    {% else %}
+                                     <img src="{{ MEDIA_URL }}img/icons/receita_lista.png" alt="{{ recipe.name }}">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="info">
+                                <a href="{% url 'recipe_detail' recipe.slug recipe.pk %}">
+                                    <h4>{{ recipe.name }}</h4>
+                                </a>
+
+                                <p class="chef">Por: {{ recipe.user.username }}</p>
+                                <a href="{% url 'recipe_detail' recipe.slug recipe.pk %}" class="btn-see-recipe">Ver receita</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                {% if is_paginated %}
+                <hr>
+                <ul class="pagination pages">
+                    {% if page_obj.has_previous %}
+                        <li class="arrow"><a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.iteritems %}{% if not key == 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">◀</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% ifequal num page_obj.number %}
+                            <li><a href="" class="current">{{ num }}</a></li>
+                        {% else %}
+                            {% if num <= page_obj.number|add:2 and num >= page_obj.number|add:-2 %}
+                                <li><a href="?page={{ num }}{% for key, value in request.GET.iteritems %}{% if not key == 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="arrow "><a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.iteritems %}{% if not key == 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">▶</a></li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </section>
+
+        </div>
+
+        <div class="large-4 medium-4 small-12 columns ">
+            <div class="block widget hide-for-small">
+                <div class="block widget hide-for-small">
+                    <div class="form-search">
+                        <input type="radio" name="tipo-busca" value="Receitas" id="receitas-chk" checked><label for="receitas-chk">Receitas</label>
+                        <input type="radio" name="tipo-busca" value="Chefes" id="chefes-chk"><label for="chefes-chk">Chefes</label>
+
+                        <div class="row collapse">
+                            <div class="small-9 columns">
+                                <input name="q" id="id_q" type="text" placeholder="Pesquisar receitas ou chefes">
+                            </div>
+                            <div class="small-3 columns">
+                                <button onclick="search();" class="button postfix"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% include 'elements/sidebar_chef_recipe.html' %}
+            {% include 'elements/sidebar_social.html' %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+    $('#id_q').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search(){
+        var tipo_busca = $('input[name="tipo-busca"]:checked').val();
+        var q = $('input[name="q"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'recipe_list' %}?q='+q;
+        }
+        if(tipo_busca == 'Chefes'){
+            window.location.href = '{% url 'user_list' %}?q='+q;
+        }
+    }
+    $('#id_q_small').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search_small(){
+        var tipo_busca = $('input[name="tipo-busca-small"]:checked').val();
+        var q = $('input[name="q-small"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'recipe_list' %}?q='+q;
+        }
+        if(tipo_busca == 'Chefes'){
+            window.location.href = '{% url 'user_list' %}?q='+q;
+        }
+    }
+</script>
+{% endblock %}

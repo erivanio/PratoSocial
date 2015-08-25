@@ -1,0 +1,126 @@
+{% extends 'elements/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Prato Social - {% if object %}Editar{% else %}Criar{% endif %} Livro de receitas{% endblock %}
+{% block content %}
+
+<section class="block-in">
+    {% include 'elements/messages.html' %}
+    <section class="dashboard row">
+        <div class="large-3 medium-3 small-12 columns ">
+            <div class="sidebar">
+                <div class="user-chef">
+                    <div class="item-top-chefs">
+                        <a href="{% url 'dashboard' request.user.pk %}">
+                            {% if request.user.get_photo_thumb %}
+                            <img src="{{ request.user.get_photo_thumb }}" alt="{{ request.user.username }}">
+                            {% else %}
+                            <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ request.user.username }}">
+                            {% endif %}
+                            <p class="name">{{ request.user.username }}</p>
+                            {% if request.user.state %}
+                            <p class="city">{{ request.user.get_state_display }}</p>
+                            {% endif %}
+                        </a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="item-list-chef">
+                        <div class="box recipe">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                                <p class="title"><i class="fa fa-file-text-o"></i></p>
+                                <p class="value">{{ request.user.recipe_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box photos">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livro de receitas">
+                                <p class="title"><i class="fa fa-book"></i></p>
+                                <p class="value">{{ request.user.recipebook_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box recipe-book">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                                <p class="title"><i class="fa fa-comments"></i></p>
+                                <p class="value">{{ request.user.comment_comments.count }}</p>
+                            </a>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="menu-sidebar">
+                    <ul class="sidebar-menu">
+                        <li><a href="{% url 'dashboard' request.user.pk %}">Perfil</a></li>
+                        {% if request.user == request.user %}
+                        <li><a href="{% url 'edit_user' request.user.pk %}">Configurações</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'user_recipe_list' request.user.pk %}">Receitas</a></li>
+                        <li><a href="{% url 'user_recipebook_list' request.user.pk %}">Livro de receitas</a></li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="large-9 medium-9 small-12 columns ">
+            <div class="content-dash">
+
+                        <section class="main-dash">
+                            <section class="block widget dashboard-header">
+                                <div class="row">
+                                    <div class="large-12 medium-12 small-12 columns">
+                                        <h4 class="box-title fa fa-pencil-square-o">Adicionar <span>livro de receita</span></h4>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="block widget content-recentes">
+                                    <form action="{% if object %}{% url 'recipebook_edit' object.id %}
+{% else %}{% url 'new_recipe_book' %}{% endif %}" enctype='multipart/form-data' method="POST" accept-charset="utf-8" data-abide>
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Nome
+                                                    <small>*</small>
+                                                    {{ form.name|attr:'required' }}
+                                                </label>
+                                                <small class="error">Digite o nome da receita</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="large-6 medium-6 small-12 columns">
+                                                <label>Descrição
+                                                    <small>*</small>
+                                                    {{ form.description|attr:'required' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                         <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Foto
+                                                    {{ form.photo }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="button small radius">Salvar</button>
+                                    </form>
+                            </section>
+
+
+                        </section>
+
+
+
+
+            </div>
+
+        </div>
+
+    </section>
+</section>
+
+{% endblock %}
+{% block extrajs %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+{% endblock %}

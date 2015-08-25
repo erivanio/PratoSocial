@@ -1,0 +1,83 @@
+{% extends 'elements/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<section class="block-in">
+    {% include 'elements/messages.html' %}
+    <div class="row">
+        <div class="large-12 large-centered medium-10 medium-centered small-12 columns">
+            <div class="widget-box widget">
+                <h4 class="box-title">Entre em contato <span>com a gente</span></h4>
+
+
+                    <div class="row">
+                        <div class="large-6 medium-6 small-12 columns">
+                            <div class="contact-map">
+                                <p>Tem alguma dúvida? Quer fazer críticas ou sugestões? Este é o canal para você se comunicar com a gente. Preencha seus dados nos campos ao lado e responderemos o mais rápido possível.</p>
+
+                                <dl>
+                                    {% if social.facebook %}
+                                    <dd><i class="icon-left fa fa-facebook"></i><a href="{{ social.facebook }}">  Prato Social</a></dd>
+                                    {% endif %}
+                                    {% if social.twitter %}
+                                    <dd><i class="icon-left fa fa-twitter"></i> <a href="{{ social.twitter }}">@pratosocial</a></dd>
+                                    {% endif %}
+                                    {% if social.instagram %}
+                                    <dd><i class="icon-left fa fa-instagram"></i> <a href="{{ social.instagram }}">@apppratosocial</a></dd>
+                                    {% endif %}
+                                    {% if social.email %}
+                                    <dd><i class="icon-left fa fa-envelope"></i> E-mail: <a href="mailto:{{ social.email }}">{{ social.email }}</a></dd>
+                                    {% endif %}
+                                </dl>
+
+                            </div>
+                        </div>
+
+                        <div class="large-6 medium-6 small-12 columns">
+
+                            <form class="contatos" accept-charset="utf-8" method="post" action="{% url 'contact' %}" data-abide>
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="large-12 medium-12 columns">
+                                        <label>Seu nome
+                                            <small>*</small>
+                                            {{ form.name|attr:'required' }}
+                                        </label>
+                                        <small class="error">Digite seu nome</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="large-6 medium-6 columns">
+                                        <label>Seu email
+                                            <small>*</small>
+                                            {{ form.email|attr:'required' }}
+                                        </label>
+                                        <small class="error">Digite seu email</small>
+                                    </div>
+                                    <div class="large-6 medium-6 columns">
+                                        <label>Seu telefone
+                                            <small>*</small>
+                                            {{ form.phone|attr:'required' }}
+                                        </label>
+                                        <small class="error">Digite seu telefone</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="large-12 medium-12 small-12 columns">
+                                        <label>Assunto
+                                            <small>*</small>
+                                            {{ form.message|attr:'required' }}
+                                        </label>
+                                        <small class="error">Digite o assunto</small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="button small right radius">Enviar</button>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

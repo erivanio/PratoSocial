@@ -1,0 +1,92 @@
+<footer>
+    <div class="footer">
+        <div class="row">
+            <div class="large-2 medium-2 small-12 columns hide-for-small">
+                {% if 'detalhe' in request.path %}
+                    <img src="{{ MEDIA_URL }}img/icons/logo-interna.png" height="49" width="270" alt="">
+                {% else %}
+                    <img src="{{ MEDIA_URL }}img/icons/logo-home.png" height="49" width="270" alt="">
+                {% endif %}
+            </div>
+
+            <div class="large-10 medium-10 small-12 columns">
+                <ul class="menu-footer">
+                    <li class="hide-for-small">
+                        <a href="{% url 'recipe_recent_list' %}">Receitas recentes</a>
+                        <a href="{% url 'recipe_visit_list' %}">Receitas Top</a>
+                        <a href="{% url 'recipe_comment_list' %}">Receitas mais comentadas</a>
+                    </li>
+                    <li class="hide-for-small">
+                        <a href="{% url 'user_list' %}">Top Chefs</a>
+                        <a href="{% url 'user_list' %}?letra=a">A</a>
+                        <a href="{% url 'user_list' %}?letra=b">B</a>
+                        <a href="{% url 'user_list' %}?letra=c">C</a>
+                        <a href="{% url 'user_list' %}?letra=d">D</a>
+                        <a href="{% url 'user_list' %}?letra=e">E</a>
+                        <a href="{% url 'user_list' %}?letra=f">F</a>
+                        <a href="{% url 'user_list' %}?letra=g">G</a>
+                        <a href="{% url 'user_list' %}?letra=h">H</a>
+                        <a href="{% url 'user_list' %}?letra=i">I</a>
+                        <a href="{% url 'user_list' %}?letra=j">J</a>
+                        <a href="{% url 'user_list' %}?letra=k">K</a>
+                        <a href="{% url 'user_list' %}?letra=l">L</a>
+                        <a href="{% url 'user_list' %}?letra=m">M</a>
+                        <a href="{% url 'user_list' %}?letra=n">N</a>
+                        <a href="{% url 'user_list' %}?letra=o">O</a>
+                        <a href="{% url 'user_list' %}?letra=p">P</a>
+                        <a href="{% url 'user_list' %}?letra=q">Q</a>
+                        <a href="{% url 'user_list' %}?letra=r">R</a>
+                        <a href="{% url 'user_list' %}?letra=s">S</a>
+                        <a href="{% url 'user_list' %}?letra=t">T</a>
+                        <a href="{% url 'user_list' %}?letra=u">U</a>
+                        <a href="{% url 'user_list' %}?letra=v">V</a>
+                        <a href="{% url 'user_list' %}?letra=w">W</a>
+                        <a href="{% url 'user_list' %}?letra=x">X</a>
+                        <a href="{% url 'user_list' %}?letra=y">Y</a>
+                        <a href="{% url 'user_list' %}?letra=z">Z</a>
+                    </li>
+                    <li>{% if not user.is_authenticated %}
+                        <a href="" data-reveal-id="modal-cadastrar">Cadastre-se</a>
+                        <a href="" data-reveal-id="modal-login">Faça login</a>
+                        {% endif %}
+                        <a href="">Como usar</a>
+                        <a href="">Termos e Condições</a>
+                    </li>
+                    <li>
+                        <ul class="social-list">
+                            {% if social.facebook %}
+                            <li>
+                                <a class="fa fa-facebook" href="{{ social.facebook }}"></a>
+                            </li>
+                            {% endif %}
+                            {% if social.instagram %}
+                            <li>
+                                <a class="fa fa-instagram" href="{{ social.instagram }}"></a>
+                            </li>
+                            {% endif %}
+                            {% if social.twitter %}
+                            <li>
+                                <a class="fa fa-twitter" href="{{ social.twitter }}"></a>
+                            </li>
+                            {% endif %}
+                            {% if social.youtube %}
+                            <li>
+                                <a class="fa fa-youtube" href="{{ social.youtube }}"></a>
+                            </li>
+                            {% endif %}
+                        </ul>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <div class="copyright">
+        <div class="row">
+            <div class="large-12 medium-12 small-12 columns text-center">
+                <p>2015 © Copyright. Todos os direitos reservados</p>
+            </div>
+        </div>
+    </div>
+</footer>

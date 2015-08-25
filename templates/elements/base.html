@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="author" content="" />
+    <meta name="copyright" content="" />
+    <meta name="robots" content="all" />
+    <meta name="revisit-after" content="1 days" />
+    <meta name="Keywords" content="" />
+    <meta name="google-site-verification" content="">
+    <meta http-equiv="X-UA-Compatible" content="IT=edge,chrome=IE8">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="application-name" content="">
+    <meta name="description" content="">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <meta property="og:description" content="">
+    <title>{% block title %}Prato Social{% endblock %}</title>
+
+    <!-- IOS -->
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ MEDIA_URL }}img/icons/fav_icones/apple-icon-180x180.png">
+
+    <!-- Android -->
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ MEDIA_URL }}img/icons/fav_icones/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ MEDIA_URL }}img/icons/fav_icones/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ MEDIA_URL }}img/icons/fav_icones/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ MEDIA_URL }}img/icons/fav_icones/favicon-16x16.png">
+    <link rel="manifest" href="{{ MEDIA_URL }}img/icons/fav_icones/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ MEDIA_URL }}img/icons/fav_icones/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/slick.min.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/animate.min.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/fancybox.min.css" />
+
+
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/foundation.min.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/app.min.css" />
+    <!-- end block css -->
+    <script src="{{ MEDIA_URL }}js/vendor/modernizr.min.js"></script>
+
+    {% block extracss %}{% endblock %}
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-64678882-2', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v2.3&appId=169873893162868";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+</head>
+
+<body class="antialiased">
+    <div id="body">
+    {% include 'elements/header.html' %}
+    <section class="main">
+    {% block content %}{% endblock %}
+    </section>
+    {% include 'elements/footer.html' %}
+
+    </div>
+    <!-- block scripts -->
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5229ccc8349064cc" async="async"></script>
+    <script src="{{ MEDIA_URL }}js/vendor/jquery.min.js"></script>
+    <script src="{{ MEDIA_URL }}js/foundation.min.js"></script>
+    <script src="{{ MEDIA_URL }}js/wow.min.js"></script>
+    <script src="{{ MEDIA_URL }}js/slick.min.js"></script>
+    <script src="{{ MEDIA_URL }}js/fancybox.min.js"></script>
+    <script src="{{ MEDIA_URL }}js/script.min.js"></script>
+
+    {% block extrajs %}{% endblock %}
+
+    <!-- end block scripts -->
+</body>
+
+</html>

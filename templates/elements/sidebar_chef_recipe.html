@@ -1,0 +1,78 @@
+   <div class="block widget">
+        <h4 class="box-title fa fa-users">Top <span>chefs</span></h4>
+        <ul class="top-chefs">
+            {% for chef in top_chefs %}
+            <li>
+                <div class="item-top-chefs">
+                    <a href="{% url 'dashboard' chef.pk %}">
+                        {% if chef.get_photo_thumb %}
+                        <img src="{{ chef.get_photo_thumb }}" alt="{{ chef.username }}">
+                        {% else %}
+                        <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ chef.username }}">
+                        {% endif %}
+
+                        <p class="name">{{ chef.username }}</p>
+                        {% if chef.state %}
+                        <p class="city">{{ chef.get_state_display }}</p>
+                        {% endif %}
+                    </a>
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="item-list-chef">
+                    <div class="box recipe">
+                        <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                        <p class="title"><i class="fa fa-file-text-o"></i></p>
+
+                            <p class="value">{{ chef.recipe_set.count }}</p>
+                        </a>
+                    </div>
+                    <div class="box photos">
+                        <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livros de receitas">
+                            <p class="title"><i class="fa fa-book"></i></p>
+
+                            <p class="value">{{ chef.recipebook_set.count }}</p>
+                        </a>
+                    </div>
+                    <div class="box recipe-book">
+                        <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                            <p class="title"><i class="fa fa-comments"></i></p>
+
+                            <p class="value">{{ chef.comment_comments.count }}</p>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+     <section class="block widget top-recipes">
+        <h4 class="box-title fa fa-star">Top <span>receitas</span></h4>
+        <ul class="recipe-list-top-recipes small-block-grid-1 medium-block-grid-1 large-block-grid-1">
+            {% for top in visited_recipes %}
+            <li>
+                <div class="more-comment-recipe img-transition">
+                    <div class="img">
+                        <a href="{% url 'recipe_detail' top.slug top.pk %}">
+                            {% if top.photo %}
+                            <img src="{{ top.get_image_162x150 }}" alt="{{ top.name }}">
+                            {% else %}
+                             <img src="{{ MEDIA_URL }}img/icons/receita_interna.png" alt="{{ top.name }}">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="info">
+                        <a href="{% url 'recipe_detail' top.slug top.pk %}">
+                             <h4>{{ top.name }}</h4>
+                        </a>
+
+                        <p class="chef">Por: {{ top.user.username }}</p>
+                        <a href="{% url 'recipe_detail' top.slug top.pk %}" class="btn-see-recipe">Ver receita</a>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>

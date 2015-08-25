@@ -1,0 +1,21 @@
+{% if photos_face %}
+    <div class="large-12 medium-12 columns">
+        <p>Clique na imagem para selecionar</p>
+        <ul class=" small-block-grid-2 medium-block-grid-4 large-block-grid-5">
+            {% for foto in photos_face %}
+            <li id="li_photo_face_{{ forloop.counter }}">
+                <label class="select-photo" for="checkbox-face-{{ forloop.counter }}">
+                    <input id="checkbox-face-{{ forloop.counter }}" value="{{ foto }}" name="photo_facebook[]" type="checkbox">
+                   <img src="{{ foto }}" alt="">
+                </label>
+            </li>
+            {% endfor %}
+         </ul>
+    </div>
+{% else %}
+    <div class="large-12 medium-12 columns">
+        {% if msg %}
+            <p>{{ msg }}</p>
+        {% endif %}
+    </div>
+{% endif %}

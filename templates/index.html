@@ -1,0 +1,298 @@
+{% extends 'elements/base.html' %}
+
+{% block content %}
+    {% include 'elements/messages.html' %}
+        <section class="block hero">
+            <div class="row">
+                <div class="large-12 medium-12 small-12 columns ">
+                    <div class="slide-hero">
+                        {% for slide in slides %}
+                        {% if slide.recipe %}
+                            <div class="item-slide">
+                            <img class="animate zoompulse" src="{{ MEDIA_URL }}{{ slide.photo }}" height="400"
+                                 width="1200" alt="{{ slide.recipe.name }}">
+
+                            <div class="box-info">
+                                <h2>{{ slide.recipe.name }}</h2>
+                                <a href="{% url 'recipe_detail' slide.recipe.slug slide.recipe.pk %}" class="button">Ver receita</a>
+                            </div>
+                        </div>
+                        {% else %}
+                            <div class="item-slide">
+                                <a href="{{ slide.link }}">
+                                    <img class="animate zoompulse" src="{{ MEDIA_URL }}{{ slide.photo }}" height="400"
+                                         width="1200" alt="{{ slide }}">
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+          <div class="block widget show-for-small">
+                <div class="form-search">
+                    <input type="radio" name="tipo-busca-small" value="Receitas" id="receitas-chk-small" checked><label for="receitas-chk-small">Receitas</label>
+                    <input type="radio" name="tipo-busca-small" value="Chefes" id="chefes-chk-small"><label for="chefes-chk-small">Chefes</label>
+
+                    <div class="row collapse">
+                        <div class="small-9 columns">
+                            <input name="q-small" id="id_q_small" type="text" placeholder="Pesquisar receitas ou chefes">
+                        </div>
+                        <div class="small-3 columns">
+                            <button onclick="search_small();" class="button postfix"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <section class="block">
+            <div class="row">
+                <div class="large-8 medium-8 small-12 columns ">
+
+                    <section class="block widget more-recent">
+                        <h4 class="box-title fa fa-cutlery">Receitas <span>recentes</span><a href="{% url 'recipe_recent_list' %}" class="see-more">Ver mais</a></h4>
+                          <div class="row">
+                        {% for recipe in recent_recipes|slice:'0:1' %}
+                        <div class="large-7 medium-6 small-12 columns">
+                            <div class="big-recipe box-recipe img-transition">
+                                <div class="img-recipe">
+                                    {% if recipe.photo %}
+                                    <img src="{{ recipe.get_image_450x450 }}"
+                                         alt="{{ recipe.name }}">
+                                    {% else %}
+                                     <img src="{{ MEDIA_URL }}img/icons/receita_interna.png" alt="{{ recipe.name }}">
+                                    {% endif %}
+                                </div>
+
+                                <div class="info-recipe">
+                                    <h3 class="name">{{ recipe.name }}</h3>
+
+                                    <p class="description-recipe">{{ recipe.description|safe|truncatewords:'15'|striptags }}</p>
+                                    <a href="{% url 'recipe_detail' recipe.slug recipe.pk %}" class="button see-more">Veja mais</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="large-5 medium-3 small-12 columns">
+                            {% for recipe in recent_recipes|slice:'1:3' %}
+                            <div class="small-recipe box-recipe img-transition">
+                                <a href="{% url 'recipe_detail' recipe.slug recipe.pk %}">
+                                    <div class="img-recipe">
+                                        {% if recipe.photo %}
+                                        <img src="{{ recipe.get_image_260x140 }}"
+                                             alt="{{ recipe.name }}">
+                                       {% else %}
+                                         <img src="{{ MEDIA_URL }}img/icons/receita_lista.png" alt="{{ recipe.name }}">
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="info-recipe">
+                                        <h3 class="name">{{ recipe.name }}</h3>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    </section>
+
+                    <section class="block widget more-comments">
+                        <h4 class="box-title fa fa-comments-o">Receitas mais <span>comentadas</span><a href="{% url 'recipe_comment_list' %}" class="see-more">Ver mais</a></h4>
+                        <ul class="recipe-list-more-comments small-block-grid-1 medium-block-grid-2 large-block-grid-2">
+                            {% for commented in commented_recipes %}
+                            <li>
+                                <div class="more-comment-recipe img-transition">
+                                    <div class="img">
+                                        <a href="{% url 'recipe_detail' commented.slug commented.pk %}">
+                                            {% if commented.photo %}
+                                            <img src="{{ commented.get_image_162x150 }}"
+                                                 alt="{{ commented.name }}">
+                                            {% else %}
+                                             <img src="{{ MEDIA_URL }}img/icons/receita_interna.png" alt="{{ commented.name }}">
+                                            {% endif %}
+                                        </a>
+                                    </div>
+                                    <div class="info">
+                                        <a href="{% url 'recipe_detail' commented.slug commented.pk %}">
+                                            <h4>{{ commented.name }}</h4>
+                                        </a>
+
+                                        <p class="chef">Por: {{ commented.user.username }}</p>
+                                        <a href="{% url 'recipe_detail' commented.slug commented.pk %}" class="btn-see-recipe">Ver receita</a>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                    <section class="block widget top-recipes">
+                        <h4 class="box-title fa fa-star">Top <span>receitas</span><a href="{% url 'recipe_visit_list' %}" class="see-more">Ver mais</a></h4>
+                        <ul class="recipe-list-top-recipes small-block-grid-1 medium-block-grid-3 large-block-grid-3">
+                            {% for top in visited_recipes %}
+                            <li>
+                                <div class="top-recipe img-transition">
+                                    <div class="img">
+                                        <a href="{% url 'recipe_detail' top.slug top.pk %}">
+                                            {% if top.photo %}
+                                            <img src="{{ top.get_image_235x151 }}"
+                                                 alt="{{ top.name }}">
+                                            {% else %}
+                                             <img src="{{ MEDIA_URL }}img/icons/receita_lista.png" alt="{{ top.name }}">
+                                            {% endif %}
+                                        </a>
+                                    </div>
+                                    <div class="info">
+                                        <a href="{% url 'recipe_detail' top.slug top.pk %}">
+                                            <h4>{{ top.name }}</h4>
+                                        </a>
+
+                                        <p class="chef">Por: {{ top.user.username }}</p>
+                                        <a href="{% url 'recipe_detail' top.slug top.pk %}" class="btn-see-recipe">Ver receita</a>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                    <section class="widget hint-day">
+                        <h4 class="box-title fa fa-list">Sugestão do <span>dia</span></h4>
+                        <ul class="recipe-list-hint-day small-block-grid-1 medium-block-grid-2 large-block-grid-2">
+                            {% for suggested in suggested_recipes %}
+                            <li>
+                                <div class="big-recipe box-recipe img-transition">
+                                    <div class="img-recipe">
+                                        {% if suggested.photo %}
+                                        <img src="{{ suggested.get_image_450x450 }}"
+                                             alt="{{ suggested.name }}">
+                                        {% else %}
+                                     <img src="{{ MEDIA_URL }}img/icons/receita_interna.png" alt="{{ suggested.name }}">
+                                    {% endif %}
+                                    </div>
+
+                                    <div class="info-recipe">
+                                        <h3 class="name">{{ suggested.name }}</h3>
+
+                                        <p class="description-recipe">{{ suggested.description|safe|truncatewords:'15'|striptags }}</p>
+                                        <a href="{% url 'recipe_detail' suggested.slug suggested.pk %}" class="button see-more">Veja mais</a>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                </div>
+
+                <div class="large-4 medium-4 small-12 columns ">
+                    <div class="block widget hide-for-small">
+                        <div class="form-search">
+                            <input type="radio" name="tipo-busca" value="Receitas" id="receitas-chk" checked><label for="receitas-chk">Receitas</label>
+                            <input type="radio" name="tipo-busca" value="Chefes" id="chefes-chk"><label for="chefes-chk">Chefes</label>
+
+                            <div class="row collapse">
+                                <div class="small-9 columns">
+                                    <input name="q" id="id_q" type="text" placeholder="Pesquisar receitas ou chefes">
+                                </div>
+                                <div class="small-3 columns">
+                                    <button onclick="search();" class="button postfix"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <h4 class="box-title fa fa-users">Top <span>chefs</span></h4>
+                        <ul class="top-chefs small-block-grid-1 medium-block-grid-1 large-block-grid-1">
+                            {% for chef in top_chefs %}
+                            <li>
+                                <div class="item-top-chefs">
+                                    <a href="{% url 'dashboard' chef.pk %}">
+                                        {% if chef.get_photo_thumb %}
+                                        <img src="{{ chef.get_photo_thumb }}" alt="{{ chef.username }}">
+                                        {% else %}
+                                        <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ chef.username }}">
+                                        {% endif %}
+
+                                        <p class="name">{{ chef.username }}</p>
+                                        {% if chef.state %}
+                                        <p class="city">{{ chef.get_state_display }}</p>
+                                        {% endif %}
+                                    </a>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="item-list-chef">
+                                    <div class="box recipe">
+                                        <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                                        <p class="title"><i class="fa fa-file-text-o"></i></p>
+
+                                            <p class="value">{{ chef.recipe_set.count }}</p>
+                                        </a>
+                                    </div>
+                                    <div class="box photos">
+                                        <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livros de receitas">
+                                            <p class="title"><i class="fa fa-book"></i></p>
+
+                                            <p class="value">{{ chef.recipebook_set.count }}</p>
+                                        </a>
+                                    </div>
+                                    <div class="box recipe-book">
+                                        <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                                            <p class="title"><i class="fa fa-comments"></i></p>
+
+                                            <p class="value">{{ chef.comment_comments.count }}</p>
+                                        </a>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% include 'elements/sidebar_social.html' %}
+                </div>
+            </div>
+        </section>
+
+
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    $('#id_q').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search(){
+        var tipo_busca = $('input[name="tipo-busca"]:checked').val();
+        var q = $('input[name="q"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'recipe_list' %}?q='+q;
+        }
+        if(tipo_busca == 'Chefes'){
+            window.location.href = '{% url 'user_list' %}?q='+q;
+        }
+    }
+    $('#id_q_small').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search_small(){
+        var tipo_busca = $('input[name="tipo-busca-small"]:checked').val();
+        var q = $('input[name="q-small"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'recipe_list' %}?q='+q;
+        }
+        if(tipo_busca == 'Chefes'){
+            window.location.href = '{% url 'user_list' %}?q='+q;
+        }
+    }
+</script>
+{% endblock %}

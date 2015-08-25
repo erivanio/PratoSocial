@@ -1,0 +1,145 @@
+<header class="nav-header">
+    <div class="row">
+        <div class="large-3 medium-3 small-12 columns">
+            <div class="menu-logo">
+                <a href="{% url 'home' %}" class="logo">
+                    {% if 'detalhe' in request.path %}
+                    <img src="{{ MEDIA_URL }}img/icons/logo-interna.png" height="49" width="270" alt="">
+                    {% else %}
+                    <img src="{{ MEDIA_URL }}img/icons/logo-home.png" height="49" width="270" alt="">
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        <a id="menu-show-mobile"> <i class="fa fa-bars"></i></a>
+        <div class="large-9 medium-12 small-12 columns">
+            <div class="menu-header">
+                <ul class="menu">
+                    <li><a href="{% url 'home' %}">Inicio</a></li>
+                    <li><a href="{% url 'contact' %}">contato</a></li>
+                    {% if not user.is_authenticated %}
+                    <li>
+                        <a href="" data-reveal-id="modal-login">login</a>
+                        <div id="modal-login" class="reveal-modal text-center small" data-reveal  aria-hidden="true" role="dialog">
+                            <p class="lead">Faça seu login</p>
+                            <form method="post" action="{% url 'home' %}" class="consult-car" data-abide>{% csrf_token %}
+                                <div class="row collapse">
+                                    <div class="small-4 large-4 columns">
+                                        <span class="prefix"><i class="fa fa-envelope"></i></span>
+                                    </div>
+                                    <div class="small-8 large-8 columns">
+                                        <input id="id_login-email" name="login-email" type="email" placeholder="Email" required>
+                                        <small class="error">Digite seu email</small>
+                                    </div>
+                                </div>
+                                <div class="row collapse">
+                                    <div class="small-4 large-4 columns">
+                                        <span class="prefix"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                    <div class="small-8 large-8 columns">
+                                        <input id="id_login-password" name="login-password" type="password" placeholder="Senha" required>
+                                        <small class="error">Digite sua senha</small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="button small expand">Entrar</button>
+                                <input id="id_remember_me" name="remember_me" type="checkbox">
+                                <label for="remember_me">Mantenha-me conectado</label>
+                            </form>
+                            <div id="forgot-password" class="forgot-password">
+                                <a href="{% url 'password_reset' %}">Esqueci minha senha</a>
+                            </div>
+                            <hr>
+                            <p class="lead">ou faça login com</p>
+                            <ul class="social-list acc">
+                                <li>
+                                    <a class="fa fa-facebook" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}"></a>
+                                </li>
+                                <li>
+                                    <a class="fa fa-instagram" href="{% url 'social:begin' 'instagram' %}?next={{ request.path }}"></a>
+                                </li>
+                                <li>
+                                    <a class="fa fa-google" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"></a>
+                                </li>
+                            </ul>
+                            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="" data-reveal-id="modal-cadastrar">cadastre-se</a>
+                        <div id="modal-cadastrar" class="reveal-modal text-center small" data-reveal  aria-hidden="true" role="dialog">
+                            <p class="lead">Faça seu cadastro</p>
+                            <form method="post" action="{% url 'home' %}" data-abide>
+                                {% csrf_token %}
+                                <div class="row collapse">
+                                    <div class="small-4 large-4 columns">
+                                        <span class="prefix"><i class="fa fa-user"></i></span>
+                                    </div>
+                                    <div class="small-8 large-8 columns">
+                                        <input id="id_signin-username" name="signin-username" type="text" placeholder="Nome e sobrenome" required>
+                                        <small class="error">Digite nome e sobrenome</small>
+                                    </div>
+                                </div>
+                                <div class="row collapse">
+                                    <div class="small-4 large-4 columns">
+                                        <span class="prefix"><i class="fa fa-envelope"></i></span>
+                                    </div>
+                                    <div class="small-8 large-8 columns">
+                                        <input id="id_signin-email" name="signin-email" type="email" placeholder="Email" required>
+                                        <small class="error">Digite um email válido</small>
+                                    </div>
+                                </div>
+                                <div class="row collapse">
+                                    <div class="small-4 large-4 columns">
+                                        <span class="prefix"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                    <div class="small-8 large-8 columns">
+                                        <input id="id_signin-password1" name="signin-password1" type="password" placeholder="Senha" required>
+                                        <small class="error">Digite uma senha</small>
+                                    </div>
+                                </div>
+                                <div class="row collapse">
+                                    <div class="small-4 large-4 columns">
+                                        <span class="prefix"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                    <div class="small-8 large-8 columns">
+                                        <input id="id_signin-password2" name="signin-password2" type="password" placeholder="Confirmar senha" required>
+                                        <small class="error">Confiurme sua senha</small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="button small expand">Entrar</button>
+                            </form>
+                            <hr>
+                            <p class="lead">ou faça cadastre-se com</p>
+                            <ul class="social-list acc">
+                                <li>
+                                    <a class="fa fa-facebook" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}"></a>
+                                </li>
+{#                                <li>#}
+{#                                    <a class="fa fa-instagram" href="{% url 'social:begin' 'instagram' %}?next={{ request.path }}"></a>#}
+{#                                </li>#}
+                                <li>
+                                    <a class="fa fa-google" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"></a>
+                                </li>
+                            </ul>
+                            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="logado">
+                        <a href="{% url 'dashboard' request.user.id %}" title="Perfil">
+                            {% if request.user.get_photo_thumb %}
+                            <img src="{{ request.user.get_photo_thumb }}" alt="{{ request.user.username }}">
+                            {% else %}
+                            <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ request.user.username }}">
+                            {% endif %}
+                            <span>{{ request.user.username }} <i class="fa fa-gear icon-right"></i></span>
+                        </a>
+                    </li>
+                    <li><a href="{% url 'logout' %}">sair</a></li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

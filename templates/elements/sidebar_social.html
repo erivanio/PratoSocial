@@ -1,0 +1,19 @@
+{% if social.facebook %}
+    <div class="widget-social hide-for-small">
+        <div class="fb-page" data-href="{{ social.facebook }}" data-width="370"
+             data-hide-cover="false" data-show-facepile="true" data-show-posts="false">
+            <div class="fb-xfbml-parse-ignore">
+                <blockquote cite="{{ social.facebook }}"><a
+                        href="{{ social.facebook }}">Facebook</a></blockquote>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if social.snapwidget %}
+    <div class="widget widget-social hide-for-small">
+        <!-- SnapWidget -->
+        <h4 class="box-title fa fa-instagram">Nosso <span>instagram</span></h4>
+        {{ social.snapwidget|safe }}
+    </div>
+{% endif %}

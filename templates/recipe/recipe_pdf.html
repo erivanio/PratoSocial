@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            .footer {
+                color: #fff;
+                font-size: 10px;
+                background: #eb772a;
+	            font-weight: bold;
+                padding: 13px 15px 7px 15px;
+                text-align: center;
+            }
+
+            .text-left {
+                text-align: left;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .header {
+                color: #000;
+	            font-weight: bold;
+            }
+
+
+            .logo{
+                text-align: center;
+            }
+
+            #header_content_title h1{
+                text-align: center;
+                font-size: 15px;
+                background-color: #eb772a;
+                color: #fff;
+                padding-top: 7px;
+                padding-bottom: 0;
+                line-height: 18px;
+            }
+
+            .pic-foto{
+                width: 350px;
+                margin-right: 20px;
+            }
+
+            .recipe-detail-info{
+                padding-left: 10px;
+            }
+
+            .recipe-detail-info p{
+                font-size: 16px;
+                padding-bottom: 0px;
+            }
+
+            .recipe-detail-info p b{
+               padding-right: 10px;
+            }
+
+             .recipe-detail-info p i{
+               padding-right: 10px;
+                 font-size: 13px;
+            }
+
+            .recipe-info{
+                width: 1000px;
+            }
+
+            .recipe-info h3{
+                font-size: 15px;
+                line-height: 10px;
+                padding-bottom: 1px;
+            }
+
+            .recipe-info p{
+                font-size: 14px;
+            }
+
+
+
+            @page {
+                size: a4 portrait;
+
+
+                @frame header_content_logo {
+                    -pdf-frame-content: header_content_logo;
+                    left: 50pt; width: 512pt; top: 25pt; height: 37pt;
+                }
+                @frame header_content_date {
+                    -pdf-frame-content: header_content_date;
+                    left: 362pt; width: 200pt; top: 27pt; height: 25pt;
+                }
+                @frame header_content_title {
+                    -pdf-frame-content: header_content_title;
+                    left: 50pt; width: 512pt; top: 75pt; height: 25pt;
+                }
+                @frame header-separator {
+                    -pdf-frame-content: header-separator;
+                    left: 50pt; width: 512pt; top: 55pt; height: 10pt;
+                }
+
+                @frame content_frame {
+                    left: 50pt; width: 512pt; top: 110pt; height: 687pt;
+                }
+
+
+                @frame page_info {
+                    -pdf-frame-content: page_info;
+                    left: 50pt; width: 512pt; top: 785pt; height: 20pt;
+                }
+                @frame footer_frame_left {
+                    -pdf-frame-content: footer_content_left;
+                    left: 50pt; width: 512pt; top: 808pt; height: 40pt;
+                }
+                @frame footer_frame_right_text {
+                    -pdf-frame-content: footer_content_right_text;
+                    left: 311pt; width: 195pt; top: 808pt; height: 40pt;
+                }
+                @frame footer_frame_right_img {
+                    -pdf-frame-content: footer_content_right_img;
+                    left: 505pt; width: 57pt; top: 808pt; height: 40pt;
+                }
+            }
+        </style>
+
+</head>
+<body>
+        <!-- HEADER -->
+        <div class="header">
+            <div id="header_content_logo" class="logo">
+                <img src="{{ MEDIA_URL }}img/icons/logo-interna.png"/>
+            </div>
+
+            <div id="header_content_title" class="text-center">
+                <h1>{{ recipe.name }}</h1>
+            </div>
+        </div>
+        <!-- HEADER -->
+
+        <!-- CONTENT -->
+            <div id="content_frame">
+
+
+                    <table cellpadding="0" cellspacing="0" style="padding-bottom: 20px; width: 1000px;">
+                        <tr>
+                            <td class="pic-foto">
+                               <img src="{{ MEDIA_URL }}{{ recipe.photo }}">
+                            </td>
+                             <td class="recipe-detail-info">
+                                <p><b>Receita enviada por:</b> {{ recipe.user.username }}</p>
+                                <p><b>Tempo de preparo: </b>{{ recipe.time_of_preparation }}</p>
+                                <p><b>Rendimento: </b>{{ recipe.produce }}</p>
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+
+
+                     <table width="1000px" cellpadding="0" cellspacing="0">
+                        <tr style="padding-bottom: 20px; width: 1000px;">
+                             <td class="recipe-info">
+                                 <h3>Descrição</h3>
+                                <p>{{ recipe.description|safe }}</p>
+                             </td>
+                        </tr>
+                     </table>
+
+                    <table width="1000px" cellpadding="0" cellspacing="0">
+                        <tr style="padding-bottom: 20px; width: 1000px;">
+                             <td class="recipe-info">
+                                 <h3>Ingredientes</h3>
+                                <p>{{ recipe.ingredients|safe  }}</p>
+                             </td>
+                        </tr>
+                     </table>
+
+                     <table width="1000px" cellpadding="0" cellspacing="0">
+                        <tr style="padding-bottom: 20px; width: 1000px;">
+                             <td class="recipe-info">
+                                <h3>Modo de preparo</h3>
+                                <p>{{ recipe.method_of_preparation|safe  }}</p>
+                             </td>
+                        </tr>
+                    </table>
+
+            </div>
+        <!-- CONTENT -->
+
+        <!-- FOOTER -->
+
+            <div id="footer_content_left" class="text-left footer">
+                2015 © Copyright Prato Social. Todos os direitos reservados
+            </div>
+
+
+        <!-- FOOTER -->
+
+</body>
+</html>

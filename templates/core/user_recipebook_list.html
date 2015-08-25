@@ -1,0 +1,209 @@
+{% extends 'elements/base.html' %}
+{% block content %}
+
+
+<section class="block-in">
+    {% include 'elements/messages.html' %}
+
+    <section class="dashboard row">
+        <div class="large-3 medium-3 small-12 columns ">
+            <div class="sidebar">
+                <div class="user-chef">
+                    <div class="item-top-chefs">
+                        <a href="{% url 'dashboard' chef.pk %}">
+                            {% if chef.get_photo_thumb %}
+                            <img src="{{ chef.get_photo_thumb }}" alt="{{ chef.username }}">
+                            {% else %}
+                            <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ chef.username }}">
+                            {% endif %}
+                            <p class="name">{{ chef.username }}</p>
+                            {% if chef.state %}
+                            <p class="city">{{ chef.get_state_display }}</p>
+                            {% endif %}
+                        </a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="item-list-chef">
+                        <div class="box recipe">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                                <p class="title"><i class="fa fa-file-text-o"></i></p>
+                                <p class="value">{{ chef.recipe_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box photos">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livro de receitas">
+                                <p class="title"><i class="fa fa-book"></i></p>
+                                <p class="value">{{ chef.recipebook_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box recipe-book">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                                <p class="title"><i class="fa fa-comments"></i></p>
+                                <p class="value">{{ chef.comment_comments.count }}</p>
+                            </a>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="menu-sidebar">
+                     <ul class="sidebar-menu">
+                        <li><a href="{% url 'dashboard' chef.pk %}">Perfil</a></li>
+                        {% if request.user == chef %}
+                        <li><a href="{% url 'edit_user' chef.pk %}">Configurações</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'user_recipe_list' chef.pk %}">Receitas</a></li>
+                        <li><a href="{% url 'user_recipebook_list' chef.pk %}">Livro de receitas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="large-9 medium-9 small-12 columns ">
+            <div class="content-dash">
+                        <section class="main-dash">
+                            <section class="block widget dashboard-header">
+                                <div class="row">
+                                    <div class="large-6 medium-3 small-12 columns">
+                                        <h4 class="box-title fa fa-book">Livros de <span>Receitas</span></h4>
+                                    </div>
+                                    <div class="large-6 medium-9 small-12 columns">
+                                            <ul class="menu-dash">
+                                              {% if request.user == chef %}
+                                              <li class="btn">
+                                                    <a class="button  small" data-dropdown="drop-menu-1" aria-controls="drop-menu-1" aria-expanded="false"><i class="fa fa-plus"></i></a>
+                                                    <ul id="drop-menu-1" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+                                                      <li><a href="{% url 'new_recipe' %}">Nova receita</a></li>
+                                                      <li><a href="{% url 'new_recipe_book' %}">Novo Livro de receitas</a></li>
+                                                    </ul>
+                                              </li>
+                                              {% endif %}
+                                              <li class="btn">
+                                                  <a href="#" data-dropdown="drop-menu-2" aria-controls="drop-menu-2" aria-expanded="false" class="button dropdown small">Tudo</a><br>
+                                                  <ul id="drop-menu-2" data-dropdown-content class="f-dropdown" aria-hidden="true">
+                                                    <li>
+                                                        <a href="{% url 'user_recipebook_list' chef.pk %}">  livros de receitas</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{% url 'user_recipe_list' chef.pk %}">  receitas</a>
+                                                    </li>
+                                                  </ul>
+                                              </li>
+                                              <li class="btn">
+                                                    <a class="button  small" data-dropdown="drop-search" aria-controls="drop-search" aria-expanded="false"><i class="fa fa-search"></i></a>
+                                                    <div id="drop-search" data-dropdown-content class="f-dropdown content medium" aria-hidden="true" tabindex="-1">
+                                                        <div class="form-search">
+                                                            <input type="radio" name="tipo-busca" value="Receitas" id="receitas-chk" checked>
+                                                            <label for="receitas-chk">Receitas</label>
+                                                            <input type="radio" name="tipo-busca" value="Livros" id="chefes-chk">
+                                                            <label for="chefes-chk">Livros de receitas</label>
+                                                            <div class="row collapse">
+                                                                <div class="small-9 columns">
+                                                                    <input name="q" id="id_q" type="text" placeholder="Pesquisar receitas ou livros de receitas">
+                                                                </div>
+                                                                <div class="small-3 columns">
+                                                                    <button onclick="search();" type="submit" class="button postfix"><i class="fa fa-search"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                              </li>
+                                            </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+
+
+                            <section class="block widget content-recentes">
+                                <div class="box-content">
+                                    <ul class=" small-block-grid-2 medium-block-grid-4 large-block-grid-4">
+                                        {% for recipe_book in object_list %}
+                                        <li>
+                                           <div class="item-dash item-recentes">
+                                               <div class="img">
+                                                   {% if recipe_book.get_photo_thumb %}
+                                                    <img src="{{ recipe_book.get_photo_thumb }}" alt="{{ recipe_book.name }}">
+                                                    {% else %}
+                                                    <img src="{{ MEDIA_URL }}img/icons/book-default.jpg" height="189" width="189" alt="{{ recipe_book.name }}">
+                                                    {% endif %}
+                                                   <div class="see">
+                                                       <a href="{% url 'recipebook_recipe_list' chef.pk recipe_book.pk %}"><i class="fa fa-eye"></i>Ver</a>
+                                                   </div>
+                                               </div>
+                                               <div class="info">
+                                                    <h5 class="title">{{ recipe_book.name }}</h5>
+                                                    <p class="subtitle">{{ recipe_book.description|safe|truncatewords:'8'|striptags }}</p>
+                                               </div>
+                                               <div class="function">
+                                                    <a href="{% url 'recipe_book_pdf' recipe_book.pk %}" class="button"><i class="fa fa-file-pdf-o"></i>Visualizar PDF</a>
+                                                    {% if request.user == chef %}
+                                                    <a href="{% url 'recipebook_edit' recipe_book.pk %}" class="button"><i class="fa fa-pencil"></i>Editar livro</a>
+                                                    <a href="" class="button" data-reveal-id="modal-excluir-1"><i class="fa fa-trash-o"></i>Excluir</a>
+                                                    <div id="modal-excluir-1" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                                                        <p class="lead">Deseja realmente deletar esta receita?</p>
+                                                        <a href="" class="close-reveal-modal button secondary small radius left">Não</a>
+                                                        <form action="{% url 'recipe_book_delete' recipe_book.pk %}" method="post">{% csrf_token %}
+                                                        <button type="submit" class="button small radius right">Sim</button>
+                                                        </form>
+                                                        <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                                                    </div>
+                                                    {% endif %}
+                                               </div>
+                                           </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% if is_paginated %}
+                                    <hr>
+                                    <ul class="pagination pages">
+                                        {% if page_obj.has_previous %}
+                                            <li class="arrow"><a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.iteritems %}{% if not key == 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">◀</a></li>
+                                        {% endif %}
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% ifequal num page_obj.number %}
+                                                <li><a href="" class="current">{{ num }}</a></li>
+                                            {% else %}
+                                                {% if num <= page_obj.number|add:2 and num >= page_obj.number|add:-2 %}
+                                                    <li><a href="?page={{ num }}{% for key, value in request.GET.iteritems %}{% if not key == 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
+                                                {% endif %}
+                                            {% endifequal %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                            <li class="arrow "><a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.iteritems %}{% if not key == 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">▶</a></li>
+                                        {% endif %}
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </section>
+                        </section>
+
+
+
+
+            </div>
+        </div>
+    </section>
+</section>
+
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+    $('#id_q').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search(){
+        var tipo_busca = $('input[name="tipo-busca"]:checked').val();
+        var q = $('input[name="q"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'user_recipe_list' chef.pk %}?q='+q;
+        }
+        if(tipo_busca == 'Livros'){
+            window.location.href = '{% url 'user_recipebook_list' chef.pk %}?q='+q;
+        }
+    }
+</script>
+{% endblock %}

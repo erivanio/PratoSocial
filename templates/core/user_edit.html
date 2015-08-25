@@ -1,0 +1,161 @@
+{% extends 'elements/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<section class="block-in">
+    {% include 'elements/messages.html' %}
+    <section class="dashboard row">
+        <div class="large-3 medium-3 small-12 columns ">
+            <div class="sidebar">
+                <div class="user-chef">
+                    <div class="item-top-chefs">
+                        <a href="{% url 'dashboard' object.pk %}">
+                            {% if object.get_photo_thumb %}
+                            <img src="{{ object.get_photo_thumb }}" alt="{{ object.username }}">
+                            {% else %}
+                            <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ object.username }}">
+                            {% endif %}
+                            <p class="name">{{ object.username }}</p>
+                            {% if object.state %}
+                            <p class="city">{{ object.get_state_display }}</p>
+                            {% endif %}
+                        </a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="item-list-chef">
+                        <div class="box recipe">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                                <p class="title"><i class="fa fa-file-text-o"></i></p>
+                                <p class="value">{{ object.recipe_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box photos">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livro de receitas">
+                                <p class="title"><i class="fa fa-book"></i></p>
+                                <p class="value">{{ object.recipebook_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box recipe-book">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                                <p class="title"><i class="fa fa-comments"></i></p>
+                                <p class="value">{{ object.comment_comments.count }}</p>
+                            </a>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="menu-sidebar">
+                    <ul class="sidebar-menu">
+                        <li><a href="{% url 'dashboard' object.pk %}">Perfil</a></li>
+                        {% if request.user == object %}
+                        <li><a href="{% url 'edit_user' object.pk %}">Configurações</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'user_recipe_list' object.pk %}">Receitas</a></li>
+                        <li><a href="{% url 'user_recipebook_list' object.pk %}">Livro de receitas</a></li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="large-12 medium-12 columns text-center">
+                <a href="" class="button small radius alert" data-reveal-id="modal-excluir-user-{{ object.id }}"><i class="fa fa-trash-o"></i>  Excluir conta</a>
+                <div id="modal-excluir-user-{{ object.id }}" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                    <p class="lead">Deseja realmente deletar esta conta?</p>
+                    <a href="" class="close-reveal-modal button secondary small radius left">Não</a>
+                    <form action="{% url 'user_delete' object.pk %}" method="post">{% csrf_token %}
+                        <button type="submit" class="button small radius right">Sim</button>
+                    </form>
+                    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="large-9 medium-9 small-12 columns ">
+            <div class="content-dash">
+
+                        <section class="main-dash">
+                            <section class="block widget dashboard-header">
+                                <div class="row">
+                                    <div class="large-8 medium-8 small-8 columns">
+                                        <h4 class="box-title fa fa-pencil-square-o">Editar <span>perfil</span></h4>
+                                    </div>
+                                </div>
+                            </section>
+
+
+
+                            <section class="block widget content-recentes">
+                                    <div class="row">
+                                        <div class="large-8 medium-8 columns">
+                                            <label>Associar Contas
+                                                <ul class="social-list acc">
+                                                    <li>
+                                                        <a class="fa fa-facebook" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}"></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="fa fa-instagram" href="{% url 'social:begin' 'instagram' %}?next={{ request.path }}"></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="fa fa-google" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"></a>
+                                                    </li>
+                                                </ul>
+                                            </label>
+                                        </div>
+
+                                    </div>
+                                <hr>
+                                    <form method="post" enctype='multipart/form-data' action="{% url 'edit_user' object.id %}" data-abide>{% csrf_token %}
+                                        <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Seu nome
+                                                    <small>*</small>
+                                                    {{ form.username|attr:'required' }}
+                                                </label>
+                                                <small class="error">Digite seu nome</small>
+                                            </div>
+                                        </div>
+                                         <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Foto
+                                                    {{ form.photo }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                         <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Estado
+                                                    {{ form.state}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="button small radius">Salvar</button>
+                                    </form>
+                            </section>
+
+
+                        </section>
+
+
+
+
+            </div>
+
+        </div>
+
+    </section>
+</section>
+
+{% endblock %}
+{% block extrajs %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+<script src="{{ MEDIA_URL }}js/jquery.geocomplete.min.js"></script>
+<script>
+    $(function(){
+        $("#id_address").geocomplete();
+    });
+</script>
+
+
+{% endblock %}

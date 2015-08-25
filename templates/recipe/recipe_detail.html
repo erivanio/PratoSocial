@@ -1,0 +1,388 @@
+{% extends 'elements/base.html' %}
+{% block title %}Prato Social - {{ object.name }}{% endblock %}
+{% block extracss %}
+    {% load l10n %}
+    {% load comments %}
+    {% load tagsplit %}
+    <style>
+        #id_honeypot {
+            display: none;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+
+<section class="block-in">
+    {% if messages %}
+    <div class="row">
+        <div class="large-12 medium-12 small-12 columns ">
+            {% for message in messages %}
+              <div data-alert class="alert-box {{ message.tags }} radius">
+                {{ message }}
+                <a href="#" class="close">&times;</a>
+              </div>
+            {% endfor %}
+        </div>
+     </div>
+    {% endif %}
+    <div class="row">
+        <div class="large-8 medium-8 small-12 columns ">
+            <div class="bread">
+                <ul class="breadcrumbs">
+                    <li><a href="{% url 'home' %}">Início</a></li>
+                    <li><a href="{% url 'recipe_list' %}">Listagem de Receitas</a></li>
+                    <li class="current"><a href="#">Receita</a></li>
+                </ul>
+            </div>
+
+            <div class="block widget show-for-small">
+                <div class="form-search">
+                    <input type="radio" name="tipo-busca-small" value="Receitas" id="receitas-chk-small" checked><label for="receitas-chk-small">Receitas</label>
+                    <input type="radio" name="tipo-busca-small" value="Chefes" id="chefes-chk-small"><label for="chefes-chk-small">Chefes</label>
+
+                    <div class="row collapse">
+                        <div class="small-9 columns">
+                            <input name="q-small" id="id_q_small" type="text" placeholder="Pesquisar receitas ou chefes">
+                        </div>
+                        <div class="small-3 columns">
+                            <button onclick="search_small();" class="button postfix"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="block widget recipe-detail">
+                <h3 class="recipe-title">{{ object.name }}</h3>
+                <div class="row">
+                    <div class="large-6 medium-6 small-12 columns">
+                        <div class="banner-img">
+                            {% if object.photo %}
+                             <img src="{{ object.get_image_450x450 }}" height="350" width="350" alt="{{ object.name }}">
+                            {% else %}
+                             <img src="{{ MEDIA_URL }}img/icons/receita_interna.png" height="350" width="350" alt="{{ object.name }}">
+                            {% endif %}
+                             <div class="addthis_sharing_toolbox"></div>
+                        </div>
+                    </div>
+                    <div class="large-6 medium-6 small-12 columns">
+                        <ul class="recipe-detail-info">
+
+                            <li>
+                                <div class="item-top-chefs">
+                                    <a href="{% url 'dashboard' object.user_id %}">
+                                        {% if object.user.get_photo_thumb %}
+                                        <img src="{{ object.user.get_photo_thumb }}" alt="{{ object.user.username }}">
+                                        {% else %}
+                                        <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ object.user.username }}">
+                                        {% endif %}
+                                        <p class="name">{{ object.user.username }}</p>
+                                    <p class="city">{{ object.user.get_state_display|default_if_none:"" }}</p>
+                                    </a>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </li>
+                            <li class="icon-detail">
+                                <i class="fa fa-clock-o"></i>
+                                <p><span>Tempo de preparo</span>{{ object.time_of_preparation }}</p>
+                            </li>
+                            <li class="icon-detail" >
+                                <i class="fa fa-cutlery"></i>
+                                <p><span>Rendimento</span>{{ object.produce }}</p>
+                            </li>
+                            {% if user.is_authenticated %}
+                              <li>
+                                  <a href="#"  data-dropdown="drop1" aria-controls="drop1" aria-expanded="false" class="button dropdown radius small"><i class="fa fa-heart icon-left"></i>Adicionar ao livro de receitas </a><br>
+                                  <ul id="drop1" data-dropdown-content class="f-dropdown text-left" aria-hidden="true">
+                                    {% if recipe_book_list %}
+                                     {% for recipe_book in recipe_book_list %}
+                                      <li>
+                                          <a onclick="add_to_recipe_book({{ recipe_book.pk }})" href="#"><i class="fa fa-book icon-left"></i>{{ recipe_book.name }}<i>({{ recipe_book.recipes.count }})</i></a>
+                                      </li>
+                                      {% endfor %}
+                                    {% else %}
+                                      <li>
+                                          <a href="{% url 'new_recipe_book' %}"><i class="fa fa-book icon-left"></i>Adicione um livro de receita</a>
+                                      </li>
+                                    {% endif %}
+                                  </ul>
+                              </li>
+                            <script type="text/javascript">
+                                function add_to_recipe_book(recipe_book_pk) {
+                                    if (recipe_book_pk != '') {
+                                        $.ajax({
+                                            type: "GET",
+                                            url: "/receitas/adiciona-receita/{{ object.id|unlocalize }}/" + recipe_book_pk + "/",
+                                            success: function (data) {
+                                                location.reload();
+                                            },
+                                            error: function (data) {
+                                                alert("Ocorreu um erro, por favor, tente novamente.");
+                                            }
+                                        });
+                                    }
+                                }
+                            </script>
+                        {% endif %}
+                            <li><a href="{% url 'recipe_pdf' recipe.pk %}" class="button small radius"><i class="fa fa-file-pdf-o icon-left"></i>Vizualizar PDF</a></li>
+                            {% if object.user == request.user %}
+                            <li>
+                              <a href="{% url 'edit_recipe' object.slug object.pk %}" class="button small radius">
+                                <i class="fa fa-pencil icon-left"></i>
+                                Editar receita
+                              </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="block widget recipe-tags">
+                <div class="row">
+                    <div class="large-12 medium-12 small-12 columns">
+                        <div class="tags-recipe">
+                            <b>Tags:</b>
+                             {% for tag in object.tags.all %}
+                            <a href="{% url 'recipe_list' %}?q={{ tag }}">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="block widget recipe-list">
+                <h4 class="box-title fa fa-list">Ingredientes da <span>receita</span></h4>
+                <div class="recipe-list-ingredientes">
+                    <p>{{ object.ingredients|safe }}</p>
+                </div>
+            </section>
+
+            <section class="block widget preperar-mode">
+                <h4 class="box-title fa fa-fire">Modo de <span>preparo</span></h4>
+                <div class="list-preperar">
+                    <p>{{ object.method_of_preparation|safe }}</p>
+                </div>
+
+            </section>
+            {% if object.photorecipe_set.all or object.photoinstagram_set.all or object.photofacebook_set.all %}
+            <section class="block widget recipe-photos">
+                <h4 class="box-title fa fa-camera">Fotos da <span>receita</span></h4>
+                <ul class="list-recipe-photo small-block-grid-2 medium-block-grid-5 large-block-grid-4 ">
+                    {% for photo_insta in object.photoinstagram_set.all %}
+                    <li class="">
+                        <a class="fancybox th" rel="gallery-recipe" href="{{ MEDIA_URL }}{{ photo_insta.image_file }}" title="">
+                            <img src="{{ photo_insta.image_thumb }}" alt="foto de {{ object.name }}">
+                        </a>
+                    </li>
+                    {% endfor %}
+                    {% for photo_face in object.photofacebook_set.all %}
+                    <li class="">
+                        <a class="fancybox th" rel="gallery-recipe" href="{{ MEDIA_URL }}{{ photo_face.image_file }}" title="">
+                            <img src="{{ photo_face.image_thumb }}" alt="foto de {{ object.name }}">
+                        </a>
+                    </li>
+                    {% endfor %}
+                    {% for photo in object.photorecipe_set.all %}
+                    <li class="">
+                        <a class="fancybox th" rel="gallery-recipe" href="{{ MEDIA_URL }}{{ photo.photo }}" title="">
+                            <img src="{{ photo.image_thumb }}" alt="foto de {{ object.name }}">
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+            <section class="block widget recipe-comments">
+                <h4 class="box-title fa fa-comment">Envie um <span>comentário</span></h4>
+                {% if user.is_authenticated %}
+                {% get_comment_form for object as form %}
+                <form enctype="multipart/form-data" action="{% comment_form_target %}"  method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}" />
+                    <textarea name="comment" id="id_comment" cols="30" rows="5" placeholder="Escreva um comentário para esta receita."></textarea>
+                    {{ form.image }}
+                    {{ form.honeypot }}
+                    {{ form.content_type }}
+                    {{ form.object_pk }}
+                    {{ form.timestamp }}
+                    {{ form.security_hash }}
+                    <button type="submit" id="id_submit" class="button small radius ">Enviar comentário</button>
+                </form>
+                {% else %}
+                    <p>Faça o <a href="" data-reveal-id="modal-login">login</a> para comentar esta receita.</p>
+                {% endif %}
+            </section>
+
+            <section class="block widget recipe-comments">
+                <h4 class="box-title fa fa-comments">Comentários da <span>receita</span></h4>
+                {% get_comment_list for object as comment_list %}
+                {% if comment_list %}
+                <ul id="comments" class="recipe-list-ingredientes small-block-grid-1 medium-block-grid-1 large-block-grid-1">
+                    {% for comment in comment_list reversed %}
+                    <li id="c{{ comment.id }}">
+                        <div class="author-comment">
+                            <div class="photo">
+                                {% if comment.user.get_photo_thumb %}
+                                <img src="{{ comment.user.get_photo_thumb }}" alt="{{ comment.user.username }}">
+                                {% else %}
+                                <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ comment.user.username }}">
+                                {% endif %}
+                            </div>
+                            <p>{{ comment.user.username }} <span>Há {{ comment.submit_date|timesince|upto:',' }}</span></p>
+                            <p>{{ comment.comment }}</p>
+                            {% if comment.image %}
+                            <div class="photo-comment">
+                               <a class="fancybox th" rel="" href="{{ MEDIA_URL }}{{ comment.image }}" title="">
+                                   <img src="{{ comment.get_image_thumb }}" alt="">
+                               </a>
+
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>Seja o primeiro a comentar esta receita.</p>
+                {% endif %}
+            </section>
+        </div>
+
+        <div class="large-4 medium-4 small-12 columns ">
+            <div class="block widget hide-for-small">
+                <div class="form-search">
+                    <input type="radio" name="tipo-busca" value="Receitas" id="receitas-chk" checked><label for="receitas-chk">Receitas</label>
+                    <input type="radio" name="tipo-busca" value="Chefes" id="chefes-chk"><label for="chefes-chk">Chefes</label>
+
+                    <div class="row collapse">
+                        <div class="small-9 columns">
+                            <input name="q" id="id_q" type="text" placeholder="Pesquisar receitas ou chefes">
+                        </div>
+                        <div class="small-3 columns">
+                            <button onclick="search();" class="button postfix"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block widget">
+                <h4 class="box-title fa fa-users">Top <span>chefs</span></h4>
+                <ul class="top-chefs">
+                    {% for chef in top_chefs %}
+                    <li>
+                        <div class="item-top-chefs">
+                            <a href="{% url 'dashboard' chef.pk %}">
+                                {% if chef.get_photo_thumb %}
+                                <img src="{{ chef.get_photo_thumb }}" alt="{{ chef.username }}">
+                                {% else %}
+                                <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ chef.username }}">
+                                {% endif %}
+
+                                <p class="name">{{ chef.username }}</p>
+                                {% if chef.state %}
+                                <p class="city">{{ chef.get_state_display }}</p>
+                                {% endif %}
+                            </a>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="item-list-chef">
+                            <div class="box recipe">
+                                <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                                <p class="title"><i class="fa fa-file-text-o"></i></p>
+
+                                    <p class="value">{{ chef.recipe_set.count }}</p>
+                                </a>
+                            </div>
+                            <div class="box photos">
+                                <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livros de receitas">
+                                    <p class="title"><i class="fa fa-book"></i></p>
+
+                                    <p class="value">{{ chef.recipebook_set.count }}</p>
+                                </a>
+                            </div>
+                            <div class="box recipe-book">
+                                <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                                    <p class="title"><i class="fa fa-comments"></i></p>
+
+                                    <p class="value">{{ chef.comment_comments.count }}</p>
+                                </a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <section class="block widget top-recipes">
+                <h4 class="box-title fa fa-star">Top <span>receitas</span></h4>
+                <ul class="recipe-list-top-recipes small-block-grid-1 medium-block-grid-1 large-block-grid-1">
+                    {% for top in visited_recipes %}
+                    <li>
+                        <div class="more-comment-recipe img-transition">
+                            <div class="img">
+                                <a href="{% url 'recipe_detail' top.slug top.pk %}">
+                                    {% if top.get_image_162x150 %}
+                                     <img src="{{ top.get_image_162x150 }}" alt="{{ top.name }}">
+                                    {% else %}
+                                     <img src="{{ MEDIA_URL }}img/icons/receita_interna.png" height="150" width="150" alt="{{ top.name }}">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="info">
+                                <a href="{% url 'recipe_detail' top.slug top.pk %}">
+                                     <h4>{{ top.name }}</h4>
+                                </a>
+
+                                <p class="chef">Por: {{ top.user.username }}</p>
+                                <a href="{% url 'recipe_detail' top.slug top.pk %}" class="btn-see-recipe">Ver receita</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% include 'elements/sidebar_social.html' %}
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+    $('#id_q').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search(){
+        var tipo_busca = $('input[name="tipo-busca"]:checked').val();
+        var q = $('input[name="q"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'recipe_list' %}?q='+q;
+        }
+        if(tipo_busca == 'Chefes'){
+            window.location.href = '{% url 'user_list' %}?q='+q;
+        }
+    }
+    $('#id_q_small').bind('keypress', function(e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    function search_small(){
+        var tipo_busca = $('input[name="tipo-busca-small"]:checked').val();
+        var q = $('input[name="q-small"]').val();
+        if(tipo_busca == 'Receitas'){
+            window.location.href = '{% url 'recipe_list' %}?q='+q;
+        }
+        if(tipo_busca == 'Chefes'){
+            window.location.href = '{% url 'user_list' %}?q='+q;
+        }
+    }
+</script>
+{% endblock %}

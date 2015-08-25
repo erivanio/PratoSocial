@@ -1,0 +1,310 @@
+{% extends 'elements/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Prato Social - {% if object %}Editar{% else %}Criar{% endif %} Receitas{% endblock %}
+{% block content %}
+
+<section class="block-in">
+    {% include 'elements/messages.html' %}
+    <section class="dashboard row">
+        <div class="large-3 medium-3 small-12 columns ">
+            <div class="sidebar">
+                <div class="user-chef">
+                    <div class="item-top-chefs">
+                        <a href="{% url 'dashboard' request.user.pk %}">
+                            {% if request.user.get_photo_thumb %}
+                            <img src="{{ request.user.get_photo_thumb }}" alt="{{ request.user.username }}">
+                            {% else %}
+                            <img src="{{ MEDIA_URL }}img/icons/user.png" alt="{{ request.user.username }}">
+                            {% endif %}
+                            <p class="name">{{ request.user.username }}</p>
+                            {% if request.user.state %}
+                            <p class="city">{{ request.user.get_state_display }}</p>
+                            {% endif %}
+                        </a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="item-list-chef">
+                        <div class="box recipe">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Receitas">
+                                <p class="title"><i class="fa fa-file-text-o"></i></p>
+                                <p class="value">{{ request.user.recipe_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box photos">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Livro de receitas">
+                                <p class="title"><i class="fa fa-book"></i></p>
+                                <p class="value">{{ request.user.recipebook_set.count }}</p>
+                            </a>
+                        </div>
+                        <div class="box recipe-book">
+                            <a href="" data-tooltip aria-haspopup="true" class="has-tip" title="Comentários">
+                                <p class="title"><i class="fa fa-comments"></i></p>
+                                <p class="value">{{ request.user.comment_comments.count }}</p>
+                            </a>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="menu-sidebar">
+                    <ul class="sidebar-menu">
+                        <li><a href="{% url 'dashboard' request.user.pk %}">Perfil</a></li>
+                        {% if request.user == request.user %}
+                        <li><a href="{% url 'edit_user' request.user.pk %}">Configurações</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'user_recipe_list' request.user.pk %}">Receitas</a></li>
+                        <li><a href="{% url 'user_recipebook_list' request.user.pk %}">Livro de receitas</a></li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="large-9 medium-9 small-12 columns ">
+            <div class="content-dash">
+
+                        <section class="main-dash">
+                            <section class="block widget dashboard-header">
+                                <div class="row">
+                                    <div class="large-12 medium-12 small-12 columns">
+                                        <h4 class="box-title fa fa-pencil-square-o">Adicionar <span>receita</span></h4>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="block widget content-recentes">
+                                    <form enctype='multipart/form-data' action="{% if object %}{% url 'edit_recipe' object.slug object.id %}
+{% else %}{% url 'new_recipe' %}{% endif %}" method="POST" accept-charset="utf-8" data-abide>
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Nome
+                                                    <small>*</small>
+                                                    {{ form.name|attr:'required' }}
+                                                </label>
+                                                <small class="error">Digite o nome da receita</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="large-12 medium-12 small-12 columns">
+                                                <label>Descrição
+                                                    <small>*</small>
+                                                    {{ form.description|attr:'required' }}
+                                                </label>
+                                                <small class="error">Digite uma breve descrição da receita</small>
+                                            </div>
+                                        </div>
+                                    <hr>
+                                        <div class="row">
+                                            <div class="large-12 medium-12 small-12 columns">
+                                                <label>Ingredientes
+                                                    <small>*</small>
+                                                    {{ form.ingredients|attr:'required' }}
+                                                </label>
+                                                <small class="error">Digite os ingredientes da receita</small>
+                                            </div>
+                                        </div>
+                                    <hr>
+                                        <div class="row">
+                                            <div class="large-12 medium-12 small-12 columns">
+                                                <label>Método de preparo
+                                                    <small>*</small>
+                                                    {{ form.method_of_preparation|attr:'required' }}
+                                                </label>
+                                                <small class="error">Digite o método de preparo</small>
+                                            </div>
+                                        </div>
+                                    <hr>
+                                        <div class="row">
+                                            <div class="large-4 medium-4 small-12 columns">
+                                                <label>Tempo de preparo
+                                                    <small>*</small>
+                                                    {{ form.time_of_preparation|attr:'required'|attr:'placeholder:Ex: 30 min' }}
+                                                </label>
+                                                <small class="error">Informe o tempo de preparo</small>
+                                            </div>
+                                            <div class="large-4 medium-4 small-12 columns">
+                                                <label>Rendimento
+                                                    <small>*</small>
+                                                    {{ form.produce|attr:'required'|attr:'placeholder:Ex: 5 porções' }}
+                                                </label>
+                                                <small class="error">Informe quantas porções a receita pode render</small>
+                                            </div>
+                                            <div class="large-4 medium-4 small-12 columns">
+                                                <label>Tags
+                                                    <small>*</small>
+                                                    {{ form.tags|attr:'required'|attr:'placeholder:Ex: bolos, massas, saladas' }}
+                                                </label>
+                                                <small class="error">Adicione tags para facilitar a busca por sua receita</small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <label>Galeria de fotos(Selecione uma ou mais fotos)
+                                                    {{ form.images }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="large-12 medium-12 columns">
+                                                <ul class=" small-block-grid-2 medium-block-grid-4 large-block-grid-5">
+                                                    {% for thumb_face in object.photofacebook_set.all  %}
+                                                    <li id="li_photo_face_{{ thumb_face.pk }}">
+                                                       <div class="item-dash item-recentes">
+                                                           <div class="img">
+                                                               <img src="{{ thumb_face.image_thumb }}" alt="">
+                                                           </div>
+                                                           <div class="function">
+                                                               <a href="" class="button" data-reveal-id="modal-face-excluir-{{ thumb_face.pk }}"><i class="fa fa-trash-o"></i>Excluir</a>
+                                                               <div id="modal-face-excluir-{{ thumb_face.pk }}" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                                                                 <p class="lead">Deseja realmente excluir esta foto?</p>
+                                                                 <button class="close-reveal-modal button secondary small radius left">Não</button>
+                                                                 <button onclick="del_photo_face({{ thumb_face.pk }});" class="close-reveal-modal button small radius right">Sim</button>
+                                                                 <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                                                               </div>
+                                                           </div>
+                                                       </div>
+                                                    </li>
+                                                    {% endfor %}
+                                                    {% for thumb_insta in object.photoinstagram_set.all  %}
+                                                    <li id="li_photo_insta_{{ thumb_insta.pk }}">
+                                                       <div class="item-dash item-recentes">
+                                                           <div class="img">
+                                                               <img src="{{ thumb_insta.image_thumb }}" alt="">
+                                                           </div>
+                                                           <div class="function">
+                                                               <a href="" class="button" data-reveal-id="modal-insta-excluir-{{ thumb_insta.pk }}"><i class="fa fa-trash-o"></i>Excluir</a>
+                                                               <div id="modal-insta-excluir-{{ thumb_insta.pk }}" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                                                                 <p class="lead">Deseja realmente excluir esta foto?</p>
+                                                                 <button class="close-reveal-modal button secondary small radius left">Não</button>
+                                                                 <button onclick="del_photo_insta({{ thumb_insta.pk }});" class="close-reveal-modal button small radius right">Sim</button>
+                                                                 <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                                                               </div>
+                                                           </div>
+                                                       </div>
+                                                    </li>
+                                                    {% endfor %}
+                                                    {% for thumb in object.photorecipe_set.all  %}
+                                                    <li id="li_photo_{{ thumb.pk }}">
+                                                       <div class="item-dash item-recentes">
+                                                           <div class="img">
+                                                               <img src="{{ thumb.image_thumb }}" alt="">
+                                                           </div>
+                                                           <div class="function">
+                                                               <a href="" class="button" data-reveal-id="modal-excluir-{{ thumb.pk }}"><i class="fa fa-trash-o"></i>Excluir</a>
+                                                               <div id="modal-excluir-{{ thumb.pk }}" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+                                                                 <p class="lead">Deseja realmente excluir esta foto?</p>
+                                                                 <button class="close-reveal-modal button secondary small radius left">Não</button>
+                                                                 <button onclick="del_photo({{ thumb.pk }});" class="close-reveal-modal button small radius right">Sim</button>
+                                                                 <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+                                                               </div>
+                                                           </div>
+                                                       </div>
+                                                    </li>
+                                                    {% endfor %}
+                                                 </ul>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <a class="button small radius" onclick="importar_instagram();"><i class="fa fa-instagram icon-left"></i>Importar do instagram</a>
+                                        <div class="row" id="imagens_insta">
+                                        {% include 'imagens_insta.html' %}
+                                        </div>
+                                        <hr>
+                                        <a class="button small radius" onclick="importar_facebook();"><i class="fa fa-facebook icon-left"></i>Importar do facebook</a>
+                                        <div class="row" id="imagens_face">
+                                        {% include 'imagens_insta.html' %}
+                                        </div>
+                                        <hr>
+                                        <button type="submit" class="button small radius">Salvar</button>
+                                    </form>
+                            </section>
+
+
+                        </section>
+
+
+
+
+            </div>
+
+        </div>
+
+    </section>
+</section>
+
+{% endblock %}
+{% block extrajs %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript">
+    function del_photo(photo_recipe_pk) {
+        $.ajax({
+            type: "GET",
+            url: "/receitas/deletar-foto-receita/" + photo_recipe_pk + "/",
+            success: function () {
+                $("#li_photo_" + photo_recipe_pk).remove();
+            },
+            error: function (data) {
+                alert("Ocorreu um erro, por favor, tente novamente.");
+            }
+        });
+    }
+    function del_photo_insta(photo_insta_pk) {
+        $.ajax({
+            type: "GET",
+            url: "/receitas/deletar-foto-instagram-receita/" + photo_insta_pk + "/",
+            success: function () {
+                $("#li_photo_insta_" + photo_insta_pk).remove();
+            },
+            error: function (data) {
+                alert("Ocorreu um erro, por favor, tente novamente.");
+            }
+        });
+    }
+    function del_photo_face(photo_face_pk) {
+        $.ajax({
+            type: "GET",
+            url: "/receitas/deletar-foto-facebook-receita/" + photo_face_pk + "/",
+            success: function () {
+                $("#li_photo_face_" + photo_face_pk).remove();
+            },
+            error: function (data) {
+                alert("Ocorreu um erro, por favor, tente novamente.");
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function importar_instagram() {
+        $("#imagens_insta").html('<div class="large-12 medium-12 columns text-center"><img src="{{ MEDIA_URL }}img/icons/fancybox_loading@2x.gif"></div>');
+        $.ajax({
+            type: "GET",
+            url: "/receitas/get-photos-instagram/",
+            success: function (atualiza) {
+                $("#imagens_insta").html(atualiza);
+            },
+            error: function (data) {
+                alert("Ocorreu um erro, por favor, tente novamente.");
+            }
+        });
+    }
+
+    function importar_facebook() {
+        $("#imagens_face").html('<div class="large-12 medium-12 columns text-center"><img src="{{ MEDIA_URL }}img/icons/fancybox_loading@2x.gif"></div>');
+        $.ajax({
+            type: "GET",
+            url: "/receitas/get-photos-facebook/",
+            success: function (atualiza) {
+                $("#imagens_face").html(atualiza);
+            },
+            error: function (data) {
+                alert("Ocorreu um erro, por favor, tente novamente.");
+            }
+        });
+    }
+
+</script>
+{% endblock %}
