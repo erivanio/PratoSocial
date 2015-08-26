@@ -6,6 +6,7 @@
 *.egg
 *.ini
 .idea
+media/uploads/
 static/
 pratosocial/settings.ini
 migration/
