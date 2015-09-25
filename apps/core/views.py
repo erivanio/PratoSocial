@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
+from django.core.urlresolvers import reverse
 from django.db.models import Count
+from django.template.response import TemplateResponse
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, DetailView, UpdateView, ListView, DeleteView
 from django.contrib import messages
 from apps.recipe.models import Recipe, RecipeBook
 from apps.core.forms import SigninForm, LoginForm, UserEditForm
 from django.contrib.auth import authenticate, login, logout
 from apps.core.models import User
-from django.shortcuts import redirect
-from django.http import Http404
+from django.shortcuts import redirect, resolve_url
+from django.http import Http404, HttpResponseRedirect
 from apps.website.models import Slide
+from django.utils.translation import ugettext as _
 
 
 class HomeView(TemplateView):
@@ -186,3 +192,57 @@ class UserDeleteView(DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Usuário deletado com sucesso!')
         return '/'
+
+
+class PasswordResetUnregister(TemplateView):
+    template_name = 'registration/password_reset_unregister.html'
+
+
+@csrf_protect
+def password_reset(request, is_admin_site=False,
+                   template_name='registration/password_reset_form.html',
+                   email_template_name='registration/password_reset_email.html',
+                   subject_template_name='registration/password_reset_subject.txt',
+                   password_reset_form=PasswordResetForm,
+                   token_generator=default_token_generator,
+                   post_reset_redirect=None,
+                   from_email=None,
+                   current_app=None,
+                   extra_context=None,
+                   html_email_template_name=None):
+    if post_reset_redirect is None:
+        try:
+            if User.objects.filter(email=request.POST['email']).exists():
+                post_reset_redirect = reverse('password_reset_done')
+            else:
+                return redirect('password_reset_unregister')
+        except:
+            post_reset_redirect = reverse('password_reset_done')
+    else:
+        post_reset_redirect = resolve_url(post_reset_redirect)
+    if request.method == "POST":
+        form = password_reset_form(request.POST)
+        if form.is_valid():
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': token_generator,
+                'from_email': from_email,
+                'email_template_name': email_template_name,
+                'subject_template_name': subject_template_name,
+                'request': request,
+                'html_email_template_name': html_email_template_name,
+            }
+            if is_admin_site:
+                opts = dict(opts, domain_override=request.get_host())
+            form.save(**opts)
+            return HttpResponseRedirect(post_reset_redirect)
+    else:
+        form = password_reset_form()
+    context = {
+        'form': form,
+        'title': _('Password reset'),
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+    return TemplateResponse(request, template_name, context,
+                            current_app=current_app)
